@@ -1,7 +1,8 @@
 allowBuilds:
+  '@parcel/watcher': false
   '@prisma/client': true
   '@prisma/engines': true
-  lefthook: set this to true or false
+  lefthook: false
   prisma: true
   sharp: false
   unrs-resolver: false
