@@ -20,6 +20,7 @@ import {
 import { PrismaPromptRepository } from "@/infra/repositories/prisma-prompt-repository";
 import { UpdatePromptUseCase } from "@/core/application/prompts/update-prompt";
 import { DeletePromptUseCase } from "@/core/application/prompts/delete-prompt";
+import { revalidatePath } from "next/cache";
 
 type SearchFormState = {
   success: boolean;
@@ -54,6 +55,8 @@ export async function createPromptAction(
     const useCase = new CreatePromptUseCase(repository);
 
     await useCase.execute(validated.data);
+
+    revalidatePath("/", "layout");
   } catch (error) {
     const _error = error as Error;
 
@@ -87,6 +90,8 @@ export async function updatePromptAction(
     const useCase = new UpdatePromptUseCase(repository);
     await useCase.execute(validated.data);
 
+    revalidatePath("/", "layout");
+
     return { success: true, message: "Prompt updated successfully." };
   } catch (error) {
     const _error = error as Error;
@@ -106,6 +111,8 @@ export async function deletePromptAction(id: string): Promise<FormState> {
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new DeletePromptUseCase(repository);
     await useCase.execute(id);
+
+    revalidatePath("/", "layout");
 
     return { success: true, message: "Prompt deleted successfully." };
   } catch (error) {
