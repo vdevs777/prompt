@@ -1,13 +1,27 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen, waitFor } from "@/test/utils";
 import { SidebarContent, SidebarContentProps } from "./sidebar-content";
+import { useState } from "react";
 
 const pushMock = jest.fn();
+const setQueryMock = jest.fn();
 let searchParamsMock = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
-  useSearchParams: () => searchParamsMock,
+}));
+
+jest.mock("nuqs", () => ({
+  useQueryState: (key: string) => {
+    const [value, setValue] = useState(searchParamsMock.get(key) ?? "");
+
+    function setQuery(nextValue: string) {
+      setQueryMock(nextValue);
+      setValue(nextValue);
+    }
+
+    return [value, setQuery] as const;
+  },
 }));
 
 const initialPrompts = [
@@ -65,6 +79,23 @@ describe("Component: SidebarContent", () => {
       await user.type(searchInput, text);
 
       expect(searchInput).toHaveValue(text);
+    });
+  });
+
+  describe("Mobile", () => {
+    it("should open and close mobile menu", async () => {
+      makeSut();
+
+      const aside = screen.getByRole("complementary");
+      expect(aside.className).toContain("-translate-x-full");
+
+      const openButton = screen.getByRole("button", { name: "Abrir menu" });
+      await user.click(openButton);
+      expect(aside.className).toContain("translate-x-0");
+
+      const closeButton = screen.getByRole("button", { name: "Fechar menu" });
+      await user.click(closeButton);
+      expect(aside.className).toContain("-translate-x-full");
     });
   });
 
@@ -182,14 +213,13 @@ describe("Component: SidebarContent", () => {
 
       await user.type(searchInput, text);
 
-      expect(pushMock).toHaveBeenCalled();
-
-      const lastCall = pushMock.mock.calls.at(-1);
-      expect(lastCall?.[0]).toBe("/?q=A%20B");
+      expect(setQueryMock).toHaveBeenCalled();
+      const lastCall = setQueryMock.mock.calls.at(-1);
+      expect(lastCall?.[0]).toBe(text);
 
       await user.clear(searchInput);
-      const lastCallCleared = pushMock.mock.calls.at(-1);
-      expect(lastCallCleared?.[0]).toBe("/");
+      const lastClearCall = setQueryMock.mock.calls.at(-1);
+      expect(lastClearCall?.[0]).toBe("");
     });
 
     it("should submit form on typing in the search field", async () => {

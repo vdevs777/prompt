@@ -9,7 +9,10 @@ import {
   createPromptSchema,
 } from "@/core/application/prompts/create-prompt.dto";
 
-import { createPromptAction } from "@/app/actions/prompt.actions";
+import {
+  createPromptAction,
+  updatePromptAction,
+} from "@/app/actions/prompt.actions";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -17,19 +20,31 @@ import { Textarea } from "../ui/textarea";
 import { Field, FieldError } from "../ui/field";
 import { toast } from "sonner";
 import { CopyButton } from "../action-buttons/copy-button";
+import { Prompt } from "@/core/domain/prompts/entities/prompt";
 
-export function PromptForm() {
+export interface PromptFormProps {
+  prompt?: Prompt | null;
+}
+
+export function PromptForm({ prompt }: PromptFormProps) {
   const router = useRouter();
 
   const form = useForm<CreatePromptDTO>({
     resolver: zodResolver(createPromptSchema),
-    defaultValues: { content: "", title: "" },
+    defaultValues: {
+      content: prompt?.content || "",
+      title: prompt?.title || "",
+    },
   });
 
   const content = useWatch({ control: form.control, name: "content" });
 
+  const isEdit = !!prompt?.id;
+
   async function submit(data: CreatePromptDTO) {
-    const result = await createPromptAction(data);
+    const result = isEdit
+      ? await updatePromptAction({ id: prompt.id, ...data })
+      : await createPromptAction(data);
 
     if (!result.success) {
       toast.error(result.message);

@@ -27,7 +27,7 @@ describe("Component: CopyButton", () => {
   it("should disable button when content is empty", async () => {
     makeSut();
 
-    const button = screen.getByRole("button", { name: /copy/i });
+    const button = screen.getByRole("button", { name: /copiar/i });
     expect(button).toBeDisabled();
 
     await user.click(button);
@@ -41,12 +41,12 @@ describe("Component: CopyButton", () => {
 
     makeSut({ content });
 
-    const button = screen.getByRole("button", { name: /copy/i });
+    const button = screen.getByRole("button", { name: /copiar/i });
     await user.click(button);
 
     await waitFor(() =>
       expect(
-        screen.getByRole("button", { name: /copied/i })
+        screen.getByRole("button", { name: /copiado/i })
       ).toBeInTheDocument()
     );
 
@@ -55,7 +55,9 @@ describe("Component: CopyButton", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /copiar/i })
+      ).toBeInTheDocument();
     });
   });
 
@@ -67,16 +69,16 @@ describe("Component: CopyButton", () => {
     const content = "text";
 
     makeSut({ content });
-    const button = screen.getByRole("button", { name: /copy/i });
+    const button = screen.getByRole("button", { name: /copiar/i });
     await user.click(button);
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /copied/i })
+        screen.getByRole("button", { name: /copiado/i })
       ).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: /copied/i }));
+    await user.click(screen.getByRole("button", { name: /copiado/i }));
 
     expect(clearSpy).toHaveBeenCalled();
     clearSpy.mockRestore();
@@ -94,7 +96,7 @@ describe("Component: CopyButton", () => {
 
     makeSut({ content });
 
-    const button = screen.getByRole("button", { name: /copy/i });
+    const button = screen.getByRole("button", { name: /copiar/i });
     await user.click(button);
 
     await waitFor(() => {
@@ -102,6 +104,6 @@ describe("Component: CopyButton", () => {
         `Erro ao copiar o texto: ${errorMessage}`
       );
     });
-    expect(screen.getByRole("button", { name: /copy/i })).toBeVisible();
+    expect(screen.getByRole("button", { name: /copiar/i })).toBeVisible();
   });
 });
