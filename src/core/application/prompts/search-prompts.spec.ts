@@ -40,6 +40,15 @@ describe("Use Case: Search Prompts", () => {
     create: function (): Promise<void> {
       throw new Error("Function not implemented.");
     },
+    findById: function (): Promise<Prompt | null> {
+      throw new Error("Function not implemented.");
+    },
+    update: function (): Promise<Prompt> {
+      throw new Error("Function not implemented.");
+    },
+    delete: function (): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
   };
 
   it("should return all prompts when search term is empty", async () => {
