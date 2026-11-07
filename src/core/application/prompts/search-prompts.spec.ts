@@ -44,7 +44,7 @@ describe("Use Case: Search Prompts", () => {
       throw new Error("Function not implemented.");
     },
     update: function (): Promise<Prompt> {
-      throw new Error("Function not implemented.");
+      throw new Error("Function not 'mplemented.");
     },
     delete: function (): Promise<void> {
       throw new Error("Function not implemented.");
