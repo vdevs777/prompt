@@ -1,10 +1,12 @@
 name: CI
-on: [push]
+on: [pull_request]
 
 jobs:
   build:
     name: Validate code and generate build
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/rocketseat_prompt_manager?schema=public
 
     services:
       postgres:
